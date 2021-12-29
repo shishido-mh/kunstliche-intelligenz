@@ -46,7 +46,7 @@ Theta2_grad = zeros(size(Theta2));
 % Step 1: forward propagation
 
 a_1 = [ones(m, 1) X];
-z_2 = a_1 * Theta1';
+z_2 = a_1 * Theta1'; % a_1 (m x n+1) * Theta1'(n+1, n_labels)
 a_2 = sigmoid(z_2);
 a_2 = [ones(size(a_2, 1), 1) a_2];
 z_3 = a_2 * Theta2';
@@ -111,6 +111,7 @@ J = J_cost + J_regularization;
 
 
 for i = 1:m
+  
   a_1 = [1, X(i,:)]';
   z_2 = Theta1 * a_1;
   a_2 = sigmoid(z_2);
@@ -118,16 +119,13 @@ for i = 1:m
   z_3 = Theta2 * a_2;
   a_3 = sigmoid(z_3);
   y_example = (y_matrix(i,:))';
-  delta_3 = a_3 -  y_example;
+  delta_3 = a_3 - y_example;
   delta_2 = (Theta2'(2:end,:) * delta_3) .* [sigmoidGradient(z_2)];
 
   Theta1_grad = Theta1_grad + (delta_2 * a_1');
   Theta2_grad = Theta2_grad + delta_3 * a_2';
   
 endfor;
-
-Theta1_grad = (1/m) * Theta1_grad + (lambda/m) * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)];
-Theta2_grad = (1/m) * Theta2_grad + (lambda/m) * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)];
 
 % Part 3: Implement regularization with the cost function and gradients.
 %
@@ -137,6 +135,8 @@ Theta2_grad = (1/m) * Theta2_grad + (lambda/m) * [zeros(size(Theta2, 1), 1) Thet
 %               and Theta2_grad from Part 2.
 %
 
+Theta1_grad = (1/m) * Theta1_grad + (lambda/m) * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)];
+Theta2_grad = (1/m) * Theta2_grad + (lambda/m) * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)];
 
 
 
